@@ -17,24 +17,11 @@ nodes:
   ssh_cert_path: ""
   labels: {}
   taints: []
-#- address: 192.168.50.102
-#  port: "22"
-#  internal_address: 192.168.50.102
-#  role:
-#  - worker
-#  hostname_override: node2
-#  user: root
-#  docker_socket: /var/run/docker.sock
-#  ssh_key: ""
-#  ssh_key_path: ~/.ssh/id_rsa
-#  ssh_cert: ""
-#  ssh_cert_path: ""
-#  labels: {}
-#  taints: []
 services:
   etcd:
     image: ""
-    extra_args: {}
+    extra_args:
+      tls-cipher-suites: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
     extra_binds: []
     extra_env: []
     win_extra_args: {}
@@ -53,7 +40,10 @@ services:
     backup_config: null
   kube-api:
     image: ""
-    extra_args: {}
+    extra_args:
+      anonymous-auth: "false"
+      profiling: "false"
+      tls-cipher-suites: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
     extra_binds: []
     extra_env: []
     win_extra_args: {}
@@ -61,15 +51,17 @@ services:
     win_extra_env: []
     service_cluster_ip_range: 10.43.0.0/16
     service_node_port_range: ""
-    pod_security_policy: false
-    always_pull_images: false
-    secrets_encryption_config: null
+    pod_security_policy: true
+    always_pull_images: true
+    secrets_encryption_config:
+      enabled: true
     audit_log: null
     admission_configuration: null
     event_rate_limit: null
   kube-controller:
     image: ""
-    extra_args: {}
+    extra_args:
+      profiling: "false"
     extra_binds: []
     extra_env: []
     win_extra_args: {}
@@ -79,7 +71,8 @@ services:
     service_cluster_ip_range: 10.43.0.0/16
   scheduler:
     image: ""
-    extra_args: {}
+    extra_args:
+      profiling: "false"
     extra_binds: []
     extra_env: []
     win_extra_args: {}
@@ -87,7 +80,10 @@ services:
     win_extra_env: []
   kubelet:
     image: ""
-    extra_args: {}
+    extra_args:
+      anonymous-auth: "false"
+      read-only-port: "0"
+      protect-kernel-defaults: "true"
     extra_binds: []
     extra_env: []
     win_extra_args: {}
